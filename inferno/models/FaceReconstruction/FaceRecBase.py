@@ -403,6 +403,7 @@ class FaceReconstructionBase(LightningModule):
         if 'predicted_mask' in batch.keys():
             visdict['predicted_mask'] = []
         visdict['shape_image'] = []
+        visdict['depth_image'] = []  # Add this line
 
         visdict['landmarks_gt_fan'] =  []
         visdict['landmarks_gt_mediapipe'] = []
@@ -419,9 +420,7 @@ class FaceReconstructionBase(LightningModule):
         verts = batch['verts']
         trans_verts = batch['trans_verts']
         shape_images = self.renderer.render.render_shape(verts, trans_verts)
-        
-        # def render_shape(self, vertices, transformed_vertices, images=None, detail_normal_images=None, lights=None):
-        # def render_depth(self, transformed_vertices):
+        depth_images = self.renderer.render.render_depth(trans_verts)
 
 
         for b in in_batch_idx:
@@ -469,6 +468,7 @@ class FaceReconstructionBase(LightningModule):
             visdict['landmarks_pred_mediapipe'] += [landmarks_pred_mediapipe]
         
             visdict['shape_image'] += [(_torch_image2np(shape_images[b]) * 255.).astype(np.uint8)]
+            visdict['depth_image'] += [(_torch_image2np(depth_images[b]) * 255.).astype(np.uint8)]  # Add this line
 
         return visdict
 

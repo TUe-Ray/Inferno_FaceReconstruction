@@ -39,14 +39,7 @@ def save_images(outfolder, name, vis_dict, i = 0, with_detection=False):
     imsave(final_out_folder / f"geometry.png",  vis_dict['shape_image'][i])
     # imsave(final_out_folder / f"out_im.png", vis_dict['predicted_image'][i])
     
-    # Save depth map if present in visdict
-    if 'depth_images' in vis_dict:
-        for idx, depth_img in enumerate(vis_dict['depth_images']):
-            depth_path = os.path.join(final_out_folder, f"depth_{idx:04d}.png")
-            print(f"Saving depth map {idx}: shape={depth_img.shape}, dtype={depth_img.dtype}")
-            cv2.imwrite(depth_path, depth_img)
-    else:
-        print("No depth_images found in vis_dict.")
+
 
 
 def save_codes(output_folder, name, vals, i = None):
