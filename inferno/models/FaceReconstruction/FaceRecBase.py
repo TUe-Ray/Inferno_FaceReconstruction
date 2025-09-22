@@ -419,6 +419,10 @@ class FaceReconstructionBase(LightningModule):
         verts = batch['verts']
         trans_verts = batch['trans_verts']
         shape_images = self.renderer.render.render_shape(verts, trans_verts)
+        
+        # def render_shape(self, vertices, transformed_vertices, images=None, detail_normal_images=None, lights=None):
+        # def render_depth(self, transformed_vertices):
+
 
         for b in in_batch_idx:
             image = _torch_image2np(batch['image'][b]).clip(0, 1)

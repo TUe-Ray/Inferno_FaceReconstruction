@@ -40,3 +40,4 @@ assets/
 
 # cluster submission (user-specific settings)
 *submission_settings.yaml
+*.whl
