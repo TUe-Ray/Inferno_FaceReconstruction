@@ -416,17 +416,49 @@ class SRenderY(nn.Module):
         batch_size = transformed_vertices.shape[0]
 
         transformed_vertices[:, :, 2] = transformed_vertices[:, :, 2] - transformed_vertices[:, :, 2].min()
-        z = -transformed_vertices[:, :, 2:].repeat(1, 1, 3)
-        z = z - z.min()
-        z = z / z.max()
+        #z = -transformed_vertices[:, :, 2:].repeat(1, 1, 3)
+        ## [x]:CHANGED
+        z = transformed_vertices[:, :, 2:].repeat(1, 1, 3)
+        print("original z min, max:", z.min(), z.max())
+        z = z-z.min()
+        print("after - z min, max:", z.min(), z.max())
+        # z = z+1e-4
+        z = z/z.max()
+        print("after plus z min, max:", z.min(), z.max())
         # Attributes
         attributes = util.face_vertices(z, self.faces.expand(batch_size, -1, -1))
+
         # rasterize
+        transformed_vertices[:,:,2] = transformed_vertices[:,:,2] + 10
         rendering = self.rasterizer(transformed_vertices, self.faces.expand(batch_size, -1, -1), attributes)
 
         ####
         alpha_images = rendering[:, -1, :, :][:, None, :, :].detach()
         depth_images = rendering[:, :1, :, :]
+
+        # Log the max and min values before applying alpha
+        print("Depth images before alpha - min:", depth_images.min().item(), "max:", depth_images.max().item())
+
+        # Apply alpha
+        depth_images = depth_images * alpha_images
+
+        # Log the max and min values after applying alpha
+        print("Depth images after alpha - min:", depth_images.min().item(), "max:", depth_images.max().item())
+                #<for debug>
+        # Save depth_images to a numpy file for inspection
+        #np.save('depth_images.npy', depth_images.cpu().numpy())
+        # 將值為0的部分設為紅色
+        # 先建立一個RGB影像，預設為灰階
+        rgb_depth = depth_images.repeat(1, 3, 1, 1)  # [B, 3, H, W]
+        mask = (depth_images == 0)
+        rgb_depth[:, 0][mask[:, 0]] = 1.0  # R channel
+        rgb_depth[:, 1][mask[:, 0]] = 0.0  # G channel
+        rgb_depth[:, 2][mask[:, 0]] = 0.0  # B channel
+
+        # Save the rgb_depth as an image
+        rgb_depth_image = rgb_depth[0].permute(1, 2, 0).cpu().numpy()  # Convert to HWC format
+        rgb_depth_image = (rgb_depth_image * 255).astype(np.uint8)  # Scale to 0-255 and convert to uint8
+        imageio.imwrite('rgb_depth_image.png', rgb_depth_image)
         return depth_images
 
     def render_normal(self, transformed_vertices, normals):
