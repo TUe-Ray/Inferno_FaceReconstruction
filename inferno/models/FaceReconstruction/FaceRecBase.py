@@ -382,6 +382,20 @@ class FaceReconstructionBase(LightningModule):
         # print(f"Time render:\t{time_render - time_decode:0.05f}")
         # print(f"Time rering:\t{time_rering - time_render:0.05f}")
         return batch
+    
+    def save_depths(self, batch, batch_idx, prefix, in_batch_idx=None):
+        batch, ring_size = self.unring(batch)
+        
+        B = batch['image'].shape[0]
+        if in_batch_idx is None: 
+            in_batch_idx = list(range(B))
+        elif isinstance(in_batch_idx, int): 
+            in_batch_idx = [in_batch_idx]
+        verts = batch['verts']
+        trans_verts = batch['trans_verts']
+        depth_maps = self.renderer.render.render_depth(trans_verts)
+
+        return depth_maps
 
 
     def visualize_batch(self, batch, batch_idx, prefix, in_batch_idx=None):

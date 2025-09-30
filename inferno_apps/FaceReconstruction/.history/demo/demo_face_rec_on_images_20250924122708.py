@@ -38,8 +38,8 @@ def main():
     parser = argparse.ArgumentParser()
     # add the input folder arg 
     #parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ "data/EMOCA_test_example_data/images/affectnet_test_examples"))
-    parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ "/home/inferno/src/inferno/inferno_apps/FaceReconstruction/demo/TestSamples/kai3PP"))
-    parser.add_argument('--output_folder', type=str, default="demo/TestSamples/kai3PP", help="Output folder to save the results to.")
+    parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ "/home/inferno/src/inferno/inferno_apps/FaceReconstruction/demo/TestSamples/kai3PP_cropped"))
+    parser.add_argument('--output_folder', type=str, default="image_output/kai3PP_cropped_rendererChanged", help="Output folder to save the results to.")
     parser.add_argument('--model_name', type=str, default='EMICA-CVT_flame2020_notexture', help='Name of the model to use.')
     # parser.add_argument('--model_name', type=str, default='EMICA_flame2020_notexture', help='Name of the model to use.')
     parser.add_argument('--path_to_models', type=str, default=str(Path(get_path_to_assets()) / "FaceReconstruction/models"))

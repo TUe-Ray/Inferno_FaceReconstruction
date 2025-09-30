@@ -1,0 +1,2 @@
+PP_cropped: old_size: 811, center: [785.5,1067.5]
+PP: old_size: 898, center: [1306.0,836.5]

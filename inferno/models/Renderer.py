@@ -456,7 +456,7 @@ class SRenderY(nn.Module):
         rgb_depth[:, 2][mask[:, 0]] = 0.0  # B channel
 
         # Save the rgb_depth as an image
-        rgb_depth_image = rgb_depth[0].permute(1, 2, 0).cpu().numpy()  # Convert to HWC format
+        rgb_depth_image = rgb_depth[0].permute(1, 2, 0).cpu().detach().numpy()  # Convert to HWC format
         rgb_depth_image = (rgb_depth_image * 255).astype(np.uint8)  # Scale to 0-255 and convert to uint8
         imageio.imwrite('rgb_depth_image.png', rgb_depth_image)
         return depth_images

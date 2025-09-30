@@ -160,6 +160,7 @@ class TestData(Dataset):
                         old_size += [osz]
                         center += [c]
             
+            
             if isinstance(old_size, list):
                 size = []
                 src_pts = []
@@ -173,6 +174,26 @@ class TestData(Dataset):
                 src_pts = np.array(
                     [[center[0] - size / 2, center[1] - size / 2], [center[0] - size / 2, center[1] + size / 2],
                     [center[0] + size / 2, center[1] - size / 2]])
+            # Save the old size and center in the text file
+            print(f"old_size: {size}, center: {center}")
+            # Save all sizes and centers to a single file in the image folder
+            all_size_center_path = os.path.join(os.path.dirname(imagepath), 'all_size_center.txt')
+            entry = f"{imagename}: old_size: {np.squeeze(size)}, center: [{np.squeeze(center)[0]},{np.squeeze(center)[1]}]\n"
+            # Read existing entries if the file exists
+            existing_entries = {}
+            if os.path.exists(all_size_center_path):
+                with open(all_size_center_path, 'r') as f:
+                    for line in f:
+                        name, data = line.split(":", 1)
+                        existing_entries[name.strip()] = data.strip()
+            # Update or add the current entry
+            existing_entries[imagename] = f"old_size: {np.squeeze(size)}, center: [{np.squeeze(center)[0]},{np.squeeze(center)[1]}]"
+            # Write all entries back to the file
+            with open(all_size_center_path, 'w') as f:
+                for name, data in existing_entries.items():
+                    f.write(f"{name}: {data}\n")
+
+
         else:
             src_pts = np.array([[0, 0], [0, h - 1], [w - 1, 0]])
         
