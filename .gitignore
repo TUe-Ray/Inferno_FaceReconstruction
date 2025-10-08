@@ -1,3 +1,6 @@
+.history/
+TestSamples/
+mergeRGBdepth/
 results/
 external/
 singularity/

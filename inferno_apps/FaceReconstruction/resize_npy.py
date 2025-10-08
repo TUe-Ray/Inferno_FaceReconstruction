@@ -26,12 +26,18 @@ def resize_back_to_old_size(image, old_size, center, fullresolution):
     # 若是 3 通道先轉灰階；若是浮點也可直接交給 cv2.resize
     if image.ndim == 3:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Set 0s to np.nan (background to nan)
+    image = np.where(image == 0, np.nan, image)
 
     # OpenCV 要求連續記憶體
     image = np.ascontiguousarray(image)
 
     # 以雙線性插值縮放為 old_size x old_size（保持原 dtype）
     resized_img = cv2.resize(image, (old_size, old_size), interpolation=cv2.INTER_LINEAR)
+
+      # After resizing, set nan back to 0
+    resized_img = np.where(np.isnan(resized_img), 0, resized_img)
 
     # fullresolution 清零（保持輸入 dtype）
     fullresolution[:] = 0
@@ -55,6 +61,10 @@ def resize_back_to_old_size(image, old_size, center, fullresolution):
     img_right = img_left + (fr_right - fr_left)
 
     fullresolution[fr_top:fr_bottom, fr_left:fr_right] = resized_img[img_top:img_bottom, img_left:img_right]
+
+    
+    # After pasting, set nan in fullresolution back to 0
+    fullresolution = np.where(np.isnan(fullresolution), 0, fullresolution)
 
     return resized_img, fullresolution
 

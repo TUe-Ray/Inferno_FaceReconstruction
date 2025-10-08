@@ -63,7 +63,7 @@ class TestDM(LightningDataModule):
 
 
 class TestData(Dataset):
-    def __init__(self, testpath, iscrop=True, crop_size=224, scale=1.25, face_detector='fan',
+    def __init__(self, testpath, iscrop=True, crop_size=224, scale=1.5, face_detector='fan',
                  scaling_factor=1.0, max_detection=None):
         self.max_detection = max_detection
         if isinstance(testpath, list):
