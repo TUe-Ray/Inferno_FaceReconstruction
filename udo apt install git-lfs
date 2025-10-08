@@ -1,0 +1,265 @@
+[33mcommit 52e1e46dc50403d2ab8ccfb6ff89754861affb35[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Wed Oct 8 15:02:31 2025 +0200
+
+    delete onnx
+
+[33mcommit 0aeb0f83b0da9ee0a10e5a5bc157bb99d32f47fb[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Wed Oct 8 15:00:21 2025 +0200
+
+    delete onmx
+
+[33mcommit 1ed9cb312977e0e874b46a4ba8236f06f317151f[m[33m ([m[1;32mdepth_img[m[33m)[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Wed Oct 8 14:49:56 2025 +0200
+
+    depth point cloud done
+
+[33mcommit f551f971012900f3d544be05b4fd15f957f85d0c[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Tue Sep 30 16:28:08 2025 +0200
+
+    fix the  nose
+
+[33mcommit a3262398a5ad6357ff2926abaf6c1ac97e5d45a1[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Wed Sep 24 11:10:27 2025 +0200
+
+    change renderer
+
+[33mcommit e849536240778ce675512709d6c08968d3524ad2[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Mon Sep 22 16:22:17 2025 +0200
+
+    success
+
+[33mcommit f33a1fc832de87acda7f1ab3c4faca4c42ea5a0f[m
+Author: ruei <s.huang5@student.tue.nl>
+Date:   Mon Sep 22 16:04:17 2025 +0200
+
+    init
+
+[33mcommit ac21bcd72ead216b3aa0523d2c89d29b6266d8a0[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sat May 10 15:56:21 2025 +0200
+
+    Update EMOTE Readme
+
+[33mcommit 6167d7fa7be98c1e8194b623ab310f910303351d[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Dec 16 21:32:51 2024 +0100
+
+    Fix a typo in a reference to psbody-mesh package.
+
+[33mcommit f9e30ee7a04b2757cd6cfeab890e10f9f9bab455[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Fri Dec 6 12:22:19 2024 +0100
+
+    Disable confusing print out of stack when spectre not available.
+
+[33mcommit 1b0873898a7d1832ec3820da2b8e81e33503a561[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Fri Dec 6 11:33:21 2024 +0100
+
+    Fix a crash in video face reconstruction demo.
+
+[33mcommit 5e7673a458d0d686e962cf00cf54839ca8221fcf[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Nov 11 13:54:44 2024 +0100
+
+    Add missing file
+
+[33mcommit e91d76bb0dfe7a9eb0a1327fd5450e64596938bc[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Nov 11 13:43:28 2024 +0100
+
+    Update README
+
+[33mcommit 75f8f76352ad4fe9ee401c6e845228810eb7f459[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Mar 28 04:36:37 2024 +0100
+
+    Update video resampling script
+
+[33mcommit 53beb5d3d4a9b280f0f9076c59444707e595fbd6[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Mar 25 00:03:57 2024 +0100
+
+    MEAD processing scripts and readme
+
+[33mcommit be206ac1c75b4f7a42f27c7cbfa75c8ad980b164[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sun Mar 24 23:28:07 2024 +0100
+
+    Make data preloading robust towards repeated sample indices passed to the dataset (only  load one time)
+
+[33mcommit 8f577c5152e02c107dc7e094fed4eb806d675e0c[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sun Mar 24 22:08:57 2024 +0100
+
+    Refactoring
+
+[33mcommit 1d91a265e1aba24c641bc591066d6d4dce4705a8[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sun Mar 24 22:04:30 2024 +0100
+
+    Refactoring in positional encoding
+
+[33mcommit 28f063d9549630ee5066e28b36d9f8082c74e1cd[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sun Mar 24 21:46:03 2024 +0100
+
+    Bug fix in rotation losses
+
+[33mcommit cbf92479d9675d8bae598b6bba5db742ad2516ee[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Sun Mar 24 21:44:05 2024 +0100
+
+    Update requirements
+
+[33mcommit 8829f9e2dbef129f02e8f97d92af122964ee4609[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Fri Feb 2 08:59:43 2024 +0100
+
+    Update psbody-mesh dependency to a private fork that is robust towards OpenGL failure. It won't support viewer but at least the Mesh class will work
+
+[33mcommit 1fe9aa0592acd5a5deb2fd3727eadd011c8a29c0[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Fri Feb 2 08:51:57 2024 +0100
+
+    Hotfix that should fix the loading issues.
+
+[33mcommit 669249faf5cf67155fd6371ab949f3c61738a2c4[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 22:14:23 2024 +0100
+
+    Update gitignore
+
+[33mcommit 81299e584f7a1806033066e6f4c9ebed46d30c6c[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 21:31:59 2024 +0100
+
+    Update docker startup scripts
+
+[33mcommit 178fdbc9a0f57669d8a681d4730c5fd1f3bfa365[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 21:15:21 2024 +0100
+
+    Experimental pytorch2 install script
+
+[33mcommit dd92e4969685b00fdc9829973e0061d39db2c593[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 21:15:02 2024 +0100
+
+    Add the option to not load segmentations along with the video
+
+[33mcommit 4b9ede3da10e9a09bbee07ec506fc80e327e95a3[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 21:01:50 2024 +0100
+
+    Fix typo
+
+[33mcommit 571e0e643485b0056ce2597d117ada6d670bbde3[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 20:46:19 2024 +0100
+
+    Fix typo
+
+[33mcommit 12f77ab9662b1bf484e7cf8e971cca1855ceb561[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 20:18:20 2024 +0100
+
+    Fix typo
+
+[33mcommit 1a1d0f3ada95446a9546aade84ab6e01a621618d[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 11:40:20 2024 +0100
+
+    Fix typo
+
+[33mcommit 74ce26d467c458230b4d84acdaf0c5b6e677b366[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 11:27:36 2024 +0100
+
+    Add user argument to docker building script
+
+[33mcommit efa04d0d70f76afa71b1664d2181c8eac5b9fd97[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 11:22:54 2024 +0100
+
+    Minor fixes
+
+[33mcommit 43692d09d15b09330d3c13ca52d6c29444186194[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 11:14:59 2024 +0100
+
+    Minor fixes
+
+[33mcommit 936cebb405a54a756bed7e1f0f2116dd58fd0b4c[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 10:20:31 2024 +0100
+
+    Faster reconstruction rendering with pytorch3d. Decouple aligned and non-aligned stage face detector into to objects
+
+[33mcommit 4a4661b47f1cdacccb92849a8eca8930a4372003[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Thu Jan 25 07:59:20 2024 +0100
+
+    Update dockerfiles - switch to a non-root user to avoid output file permission issues
+
+[33mcommit f71557e59dbf9ee621b50e9864eef92e91f81940[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 15 23:54:11 2024 +0100
+
+    Fix data downloading script by adding the metadata file
+
+[33mcommit f975d6a51129a02be99c91b8af9e5a402b11928a[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 15 23:44:54 2024 +0100
+
+    Update version
+
+[33mcommit 4cc0453199553a4e3ed78c267a4d026c0b9caa7c[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 15 23:44:01 2024 +0100
+
+    Add experimental upgrade to Python 3.9 and pytorch 2.0. Possible to install from teh new conda environment and requirements files. Also added the related docker version.
+
+[33mcommit 32fdfb3ab45ca259b23a9be42f4b0aa82b818d28[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 15 23:38:56 2024 +0100
+
+    Refactor docker location
+
+[33mcommit 3064891bc99f37e5642f864c7d902bae4d0ce1d3[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 15 23:07:43 2024 +0100
+
+    Get rid of useless imports
+
+[33mcommit cd9b771b331a939981972967b9904fa7a88d8939[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 8 05:36:19 2024 +0100
+
+    Update MICA input processing with a mediapipe landmark option.
+
+[33mcommit 6e8c8a0b05963d2a06977c4f8eb01f7033ed6674[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 8 04:14:00 2024 +0100
+
+    Minor refactor
+
+[33mcommit f3aa77efd7c0d90e4f4535ff2232c1e109784835[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 8 04:07:42 2024 +0100
+
+    Bugfix - VideoFaceDetection dataset used for processing videos was not robust to multiple faces in the video. This should now be fixed.
+
+[33mcommit 32b4834d6515ecfcf9fca82165393d41e0caabec[m
+Author: rdanecek <danekradek@gmail.com>
+Date:   Mon Jan 8 04:04:23 2024 +0100
+
+    Make the face video demo robust towards input filenames with spaces and similar escapable characters.
+
+[33mcommit 35849783394
