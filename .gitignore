@@ -44,3 +44,6 @@ assets/
 # cluster submission (user-specific settings)
 *submission_settings.yaml
 *.whl
+
+# 忽略所有 .onnx 模型檔案
+*.onnx
