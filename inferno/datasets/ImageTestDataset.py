@@ -218,9 +218,9 @@ class TestData(Dataset):
                 dst_image = dst_image.transpose(2, 0, 1)
                 dst_images += [dst_image]
             dst_images = np.stack(dst_images, axis=0)
-            
-            imagenames = [imagename + f"{j:02d}" for j in range(dst_images.shape[0])]
-            imagepaths = [imagepath]* dst_images.shape[0]
+
+            imagenames = [imagename] * dst_images.shape[0]
+            imagepaths = [imagepath] * dst_images.shape[0]
             return {'image': torch.tensor(dst_images).float(),
                     'image_name': imagenames,
                     'image_path': imagepaths,

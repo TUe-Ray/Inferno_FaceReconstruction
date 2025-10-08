@@ -1,10 +1,14 @@
+import sys
 from pathlib import Path
 import numpy as np
 from PIL import Image
 
 # ========= 路徑設定 =========
-folder_path = input("請輸入資料夾路徑: ").strip()
-folder_path = "mergeRGBdepth/" + folder_path  # 自動加上前綴
+if len(sys.argv) > 1:
+    input_folder = sys.argv[1].strip()
+else:
+    input_folder = input("請輸入資料夾路徑: ").strip()
+folder_path = f"mergeRGBdepth/{input_folder}_resize_result"
 folder = Path(folder_path)
 rgb_path = folder / "original.jpg"
 # 改用 NumPy：優先 original.npy / original.npz，否則掃描資料夾

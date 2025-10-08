@@ -3,6 +3,7 @@ import cv2
 import os
 import json
 import shutil
+import sys
 
 def to_uint8_for_visual(arr):
     """
@@ -149,7 +150,13 @@ def load_depth_any(depth_base_path):
     return None, None
 
 if __name__ == '__main__':
-    folder_path = input('Enter the folder path: ').strip()
+    if len(sys.argv) > 1:
+        folder_path = sys.argv[1]
+    else:
+        folder_path = input('Enter the folder path: ').strip()
+    # Automatically prepend demo/TestSamples if not already present
+    if not folder_path.startswith('demo/TestSamples'):
+        folder_path = os.path.join('demo', 'TestSamples', folder_path)
     txt_path = os.path.join(folder_path, 'all_size_center.txt')
     if not os.path.exists(txt_path):
         print(f'Cannot find all_size_center.txt in {folder_path}')
