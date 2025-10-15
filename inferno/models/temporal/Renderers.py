@@ -55,6 +55,8 @@ class FlameLandmarkProjector(Renderer):
         lightcode = lightcode.view(-1, 9, 3)
 
         # world to camera
+        # TAG:verts to trans_verts
+        print(f"<DEBUG> cam shape:{cam}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         trans_verts = util.batch_orth_proj(verts, cam)
         if self.project_landmarks:
             if landmarks2d is not None:

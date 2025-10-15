@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import pickle as pkl
 from face_alignment.utils import flip, get_preds_fromhm
+import mediapipe as mp
 # from memory_profiler import profile
 
 
@@ -71,6 +72,79 @@ class FaceDetector(ABC):
         """
         raise NotImplementedError()
 
+class MediaPipeMeshFD:
+    """
+    用 MediaPipe Face Mesh 取得臉部 468/478 個 landmark，
+    以 landmark 的外接矩形當作 bbox，回傳與 FAN().run(image) 相容的介面：
+      - bboxes: List[[left, top, right, bottom], ...]（像素座標）
+      - bbox_type: 'bbox'
+    """
+    def __init__(self,
+                 static_image_mode=False,
+                 max_num_faces=1,
+                 refine_landmarks=True,       # 設 True 則 478 點（含虹膜）
+                 min_detection_confidence=0.5,
+                 min_tracking_confidence=0.5):
+        self.static_image_mode = static_image_mode
+        self.max_num_faces = max_num_faces
+        self.refine_landmarks = refine_landmarks
+        self.min_detection_confidence = min_detection_confidence
+        self.min_tracking_confidence = min_tracking_confidence
+
+        self.mp_face_mesh = mp.solutions.face_mesh
+
+    def _to_uint8(self, image_rgb):
+        # mediapipe 預期 uint8 RGB
+        if image_rgb.dtype != np.uint8:
+            if image_rgb.max() <= 1.0:
+                return (np.clip(image_rgb, 0, 1) * 255).astype(np.uint8)
+            return np.clip(image_rgb, 0, 255).astype(np.uint8)
+        return image_rgb
+
+    def run(self, image_rgb):
+        """
+        參數:
+            image_rgb: (H, W, 3) 的 RGB 影像
+        回傳:
+            bboxes: List of [l, t, r, b]（int, 像素座標）
+            bbox_type: 'bbox'
+        """
+        img = self._to_uint8(image_rgb)
+        H, W = img.shape[:2]
+        bboxes = []
+
+        # 每次呼叫時開關 context，避免長時間佔用資源
+        with self.mp_face_mesh.FaceMesh(
+            static_image_mode=self.static_image_mode,
+            max_num_faces=self.max_num_faces,
+            refine_landmarks=self.refine_landmarks,
+            min_detection_confidence=self.min_detection_confidence,
+            min_tracking_confidence=self.min_tracking_confidence
+        ) as face_mesh:
+
+            res = face_mesh.process(img)
+            if not res.multi_face_landmarks:
+                return [], 'bbox'
+
+            for face_lms in res.multi_face_landmarks:
+                xs = [lm.x for lm in face_lms.landmark]
+                ys = [lm.y for lm in face_lms.landmark]
+                # 相對座標 → 像素
+                x_min = max(0, int(min(xs) * W))
+                x_max = min(W - 1, int(max(xs) * W))
+                y_min = max(0, int(min(ys) * H))
+                y_max = min(H - 1, int(max(ys) * H))
+
+                # 保障至少 1px 大小
+                if x_max <= x_min: x_max = min(W - 1, x_min + 1)
+                if y_max <= y_min: y_max = min(H - 1, y_min + 1)
+
+                bboxes.append([x_min, y_min, x_max, y_max])
+
+            # 沒有 score，按框面積由大到小排序（讓 bbox[0] 通常是主臉）
+            bboxes.sort(key=lambda b: (b[2]-b[0])*(b[3]-b[1]), reverse=True)
+            return bboxes, 'bbox'
+
 
 class FAN(FaceDetector):
 
@@ -105,7 +179,7 @@ class FAN(FaceDetector):
                                                   face_detector_kwargs=self.face_detector_kwargs)
 
     # @profile
-    def run(self, image, with_landmarks=False, detected_faces=None):
+    def run(self, image, with_landmarks=True, detected_faces=None):
         '''
         image: 0-255, uint8, rgb, [h, w, 3]
         return: detected box list

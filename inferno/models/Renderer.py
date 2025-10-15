@@ -419,12 +419,12 @@ class SRenderY(nn.Module):
         #z = -transformed_vertices[:, :, 2:].repeat(1, 1, 3)
         ## [x]:CHANGED
         z = transformed_vertices[:, :, 2:].repeat(1, 1, 3)
-        print("original z min, max:", z.min(), z.max())
+        #print("original z min, max:", z.min(), z.max())
         z = z-z.min()
-        print("after - z min, max:", z.min(), z.max())
+        #print("after - z min, max:", z.min(), z.max())
         # z = z+1e-4
         z = z/z.max()
-        print("after plus z min, max:", z.min(), z.max())
+        #print("after plus z min, max:", z.min(), z.max())
         # Attributes
         attributes = util.face_vertices(z, self.faces.expand(batch_size, -1, -1))
 
@@ -437,7 +437,7 @@ class SRenderY(nn.Module):
         depth_images = rendering[:, :1, :, :]
 
         # Log the max and min values before applying alpha
-        print("Depth images before alpha - min:", depth_images.min().item(), "max:", depth_images.max().item())
+        #print("Depth images before alpha - min:", depth_images.min().item(), "max:", depth_images.max().item())
 
         # Apply alpha
         depth_images = depth_images * alpha_images

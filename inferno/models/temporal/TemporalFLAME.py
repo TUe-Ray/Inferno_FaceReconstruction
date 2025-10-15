@@ -41,6 +41,7 @@ class FlameShapeModel(ShapeModel):
     def forward(self, sample):
         shapecode = sample["shapecode"]
         expcode = sample["expcode"]
+        # TAG:shapecode expcode shape check and pad
         if shapecode.shape[-1] < self.flame.cfg.n_shape:
             # pad with zeros 
             missing = self.flame.cfg.n_shape - shapecode.shape[-1]

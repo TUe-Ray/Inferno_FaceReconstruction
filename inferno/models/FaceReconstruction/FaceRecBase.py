@@ -397,10 +397,52 @@ class FaceReconstructionBase(LightningModule):
 
         return depth_maps
 
+    def visualize_landmarks_pred_fan(self, batch, in_batch_idx=None):
+        batch, ring_size = self.unring(batch)
+        B = batch['image'].shape[0]
+        if in_batch_idx is None: 
+            in_batch_idx = list(range(B))
+        elif isinstance(in_batch_idx, int):
+            in_batch_idx = [in_batch_idx]
+        visdict = {}
+        visdict['landmarks_pred_fan'] =  []
+        visdict['image'] = []
+        visdict['image_original'] = []
+        visdict['shape_image'] = []
+        verts = batch['verts']
+        trans_verts = batch['trans_verts']
+        shape_images = self.renderer.render.render_shape(verts, trans_verts)
+
+        for b in in_batch_idx:
+            image = _torch_image2np(batch['image'][b]).clip(0, 1)
+            visdict['image'] += [(image * 255.).astype(np.uint8)]
+            
+            if 'image_original' in batch.keys():
+                image_original = _torch_image2np(batch['image_original'][b]).clip(0, 1) 
+                visdict['image_original'] += [(image_original* 255.).astype(np.uint8)]
+            else:
+                image_original = image
+            if "landmarks" in batch.keys():
+                if 'fan3d' in batch['landmarks'].keys():
+                    landmark_gt_fan = util.tensor_vis_landmarks_single_image(
+                    image_original, batch['landmarks']['fan3d'][b].cpu().numpy()) 
+                    visdict['landmarks_gt_fan'] += [(landmark_gt_fan * 255.).astype(np.uint8)]
+                
+                
+            
+            landmarks_pred_fan = util.tensor_vis_landmarks_single_image(
+                image_original, batch['predicted_landmarks'][b].detach().cpu().numpy())
+            visdict['landmarks_pred_fan'] +=  [(landmarks_pred_fan * 255.).astype(np.uint8)]
+            
+        
+            visdict['shape_image'] += [(_torch_image2np(shape_images[b]) * 255.).astype(np.uint8)]
+            
+        return visdict
+
 
     def visualize_batch(self, batch, batch_idx, prefix, in_batch_idx=None):
         batch, ring_size = self.unring(batch)
-        
+        #print("batch keys:", batch.keys())
         B = batch['image'].shape[0]
         if in_batch_idx is None: 
             in_batch_idx = list(range(B))

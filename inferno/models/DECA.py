@@ -971,6 +971,9 @@ class DecaModule(LightningModule):
         cam = codedict['cam']
         lightcode = codedict['lightcode']
         images = codedict['images']
+        # print cam information
+        print(f"cam shape: {cam.shape}, cam = {cam} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
         if 'masks' in codedict.keys():
             masks = codedict['masks']
         else:

@@ -47,3 +47,4 @@ assets/
 
 # 忽略所有 .onnx 模型檔案
 *.onnx
+*.npy
