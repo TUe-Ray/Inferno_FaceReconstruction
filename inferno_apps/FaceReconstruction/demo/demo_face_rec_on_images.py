@@ -36,10 +36,15 @@ from inferno.utils.other import get_path_to_assets
 
 def main():
     parser = argparse.ArgumentParser()
+    folder = "multiview"
+    scale = 1.25
+    #delta_pose = torch.tensor([[-0.05, 0.0, 0.0]])  # Move camera 10 units forward along z-axis
+
     # add the input folder arg 
     #parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ "data/EMOCA_test_example_data/images/affectnet_test_examples"))
-    parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ "/home/inferno/src/inferno/inferno_apps/FaceReconstruction/demo/TestSamples/ruei4PP"))
-    parser.add_argument('--output_folder', type=str, default="demo/TestSamples/ruei4PP", help="Output folder to save the results to.")
+    parser.add_argument('--input_folder', type=str, default= str(Path(get_path_to_assets())/ f"/home/inferno/src/inferno/inferno_apps/FaceReconstruction/demo/TestSamples/{folder}"))
+    #parser.add_argument('--output_folder', type=str, default=f"demo/TestSamples/{folder}/scale_{scale}", help="Output folder to save the results to.")
+    parser.add_argument('--output_folder', type=str, default=f"demo/TestSamples/{folder}", help="Output folder to save the results to.")
     parser.add_argument('--model_name', type=str, default='EMICA-CVT_flame2020_notexture', help='Name of the model to use.')
     # parser.add_argument('--model_name', type=str, default='EMICA_flame2020_notexture', help='Name of the model to use.')
     parser.add_argument('--path_to_models', type=str, default=str(Path(get_path_to_assets()) / "FaceReconstruction/models"))
@@ -64,7 +69,7 @@ def main():
     face_rec_model.eval()
 
     # 2) Create a dataset
-    dataset = TestData(input_folder, face_detector="fan", max_detection=20)
+    dataset = TestData(input_folder, face_detector="fan", max_detection=None)
     # dataset = TestData(
     #     input_folder,
     #     iscrop=False,          # 關閉裁切
