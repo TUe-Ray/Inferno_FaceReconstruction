@@ -165,8 +165,8 @@ if __name__ == '__main__':
     with open(txt_path, 'r') as f:
         lines = f.readlines()
 
-    # 可調整的輸出畫布大小
-    fullresolution_shape = (2312, 1736)
+    # # 可調整的輸出畫布大小
+    # fullresolution_shape = (2312, 1736)
 
     # 若來源為 JSON，仍維持彙總 JSON；若來源為 NPY，就不彙總（避免超大 JSON）
     fullresolution_dict = {}
@@ -185,6 +185,18 @@ if __name__ == '__main__':
             shutil.copy2(src_path, dst_path)
             print(f"Copied: {src_path} -> {dst_path}")
             break  # 只複製第一個找到的 jpg 作為 original
+
+    
+    if os.path.isdir(folder_path):
+        files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.jpg', '.png'))]
+        if files:
+            sample_image_path = os.path.join(folder_path, files[0])
+            sample_image = cv2.imread(sample_image_path, cv2.IMREAD_UNCHANGED)
+            fullresolution_shape = sample_image.shape[:2]
+        else:
+            raise FileNotFoundError("No image found in folder to determine fullresolution_shape.")
+    else:
+        raise FileNotFoundError(f"{folder_path} is not a valid directory.")
 
     for line in lines:
         line = line.strip()
