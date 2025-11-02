@@ -612,7 +612,7 @@ def laplacian(x):
     padding = (kernel_size - 1) // 2
     return F.conv2d(x, kernel, padding=padding, stride=1, groups=c)
 
-
+#TAG: rotation angle2matrix
 def angle2matrix(angles):
     ''' get rotation matrix from three rotation angles(degree). right-handed.
     Args:

@@ -165,8 +165,7 @@ if __name__ == '__main__':
     with open(txt_path, 'r') as f:
         lines = f.readlines()
 
-    # 可調整的輸出畫布大小
-    fullresolution_shape = (2312, 1736)
+    
 
     # 若來源為 JSON，仍維持彙總 JSON；若來源為 NPY，就不彙總（避免超大 JSON）
     fullresolution_dict = {}
@@ -176,15 +175,28 @@ if __name__ == '__main__':
     results_folder = os.path.join(folder_path, results_folder_name)
     os.makedirs(results_folder, exist_ok=True)
     print(f"Results will be saved in: {results_folder}")
-
-    # 複製所有 jpg 檔案到 results_folder，並命名為 original.jpg
+    # 將所有 jpg 和 png 檔案轉換為 jpg，並複製到 results_folder，命名為 original.jpg
     for fname in os.listdir(folder_path):
-        if fname.lower().endswith('.jpg'):
+        if fname.lower().endswith(('.jpg', '.png')):
             src_path = os.path.join(folder_path, fname)
             dst_path = os.path.join(results_folder, 'original.jpg')
-            shutil.copy2(src_path, dst_path)
-            print(f"Copied: {src_path} -> {dst_path}")
-            break  # 只複製第一個找到的 jpg 作為 original
+            image = cv2.imread(src_path)
+            cv2.imwrite(dst_path, image, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+            print(f"Converted and copied: {src_path} -> {dst_path}")
+            break  # 只處理第一個找到的檔案作為 original
+
+
+    if os.path.isdir(folder_path):
+        files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.jpg', '.png'))]
+        if files:
+            sample_image_path = os.path.join(folder_path, files[0])
+            sample_image = cv2.imread(sample_image_path, cv2.IMREAD_UNCHANGED)
+            fullresolution_shape = sample_image.shape[:2]
+        else:
+            raise FileNotFoundError("No image found in folder to determine fullresolution_shape.")
+    else:
+        raise FileNotFoundError(f"{folder_path} is not a valid directory.")
+
 
     for line in lines:
         line = line.strip()
@@ -264,7 +276,15 @@ if __name__ == '__main__':
             fullresolution_dict[img_name] = fullresolution.tolist()
 
         # 疊合原圖（若存在）
-        original_cp_path = os.path.join(folder_path, f'{img_name}.jpg')
+        original_cp_path = None
+        for ext in ['.jpg', '.png']:
+            potential_path = os.path.join(folder_path, f'{img_name}{ext}')
+            if os.path.exists(potential_path):
+                original_cp_path = potential_path
+            break
+        if original_cp_path is None:
+            print(f'Original CP image not found for: {img_name}')
+            continue
         if os.path.exists(original_cp_path):
             original_cp_img = cv2.imread(original_cp_path, cv2.IMREAD_UNCHANGED)
             #original_cp_img = cv2.rotate(original_cp_img, cv2.ROTATE_90_CLOCKWISE)  # 與 fullresolution 方向一致
