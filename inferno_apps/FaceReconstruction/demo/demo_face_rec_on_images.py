@@ -86,9 +86,9 @@ def main():
         print(f"visdict keys: {list(visdict.keys())}")
         # name = f"{i:02d}"
         current_bs = batch["image"].shape[0]
-
+        print(type(batch["image_name"]), batch["image_name"],"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
         for j in range(current_bs):
-            name =  batch["image_name"][j]
+            name =  batch["image_name"]
             print("image_name:", name)
 
             sample_output_folder = Path(output_folder) / name

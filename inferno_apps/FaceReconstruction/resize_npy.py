@@ -73,28 +73,48 @@ def save_blended_image(fullresolution_any_dtype, original_image, save_path, alph
     """
     將 fullresolution 與 original 疊圖後輸出 JPG。
     若 fullresolution 非 uint8，會做 min-max normalize 僅用於可視化。
+    會自動將原圖從灰階/4通道轉成 3 通道 BGR，並確保大小/型態一致。
     """
-    # 先確保是 2D 單通道
+    # full -> 可視化的 3 通道 BGR、uint8
     if fullresolution_any_dtype.ndim == 3:
         fullresolution_any_dtype = cv2.cvtColor(fullresolution_any_dtype, cv2.COLOR_BGR2GRAY)
-
     full_vis = to_uint8_for_visual(fullresolution_any_dtype)
-
     if full_vis.ndim == 2:
         full_color = cv2.cvtColor(full_vis, cv2.COLOR_GRAY2BGR)
     else:
         full_color = full_vis
 
-    if original_image.ndim == 2:
-        original_color = cv2.cvtColor(original_image, cv2.COLOR_GRAY2BGR)
+    # original -> 轉成 3 通道 BGR、uint8
+    orig = original_image
+    if orig.ndim == 2:
+        original_color = cv2.cvtColor(orig, cv2.COLOR_GRAY2BGR)
+    elif orig.ndim == 3 and orig.shape[2] == 4:
+        original_color = cv2.cvtColor(orig, cv2.COLOR_BGRA2BGR)  # **關鍵：去掉 alpha**
+    elif orig.ndim == 3 and orig.shape[2] == 3:
+        original_color = orig
+    elif orig.ndim == 3 and orig.shape[2] == 1:
+        original_color = cv2.cvtColor(orig, cv2.COLOR_GRAY2BGR)
     else:
-        original_color = original_image
+        # 萬一是奇怪形狀，盡可能壓成 2D 再轉 BGR
+        while orig.ndim > 2:
+            orig = orig[..., 0]
+        original_color = cv2.cvtColor(orig, cv2.COLOR_GRAY2BGR)
 
-    if full_color.shape != original_color.shape:
+    # 尺寸不一就把 original 改到 full 的尺寸
+    if original_color.shape[:2] != full_color.shape[:2]:
         original_color = cv2.resize(original_color, (full_color.shape[1], full_color.shape[0]))
+
+    # 型態統一（uint8），避免 dtype 不匹配
+    if original_color.dtype != full_color.dtype:
+        original_color = original_color.astype(full_color.dtype, copy=False)
+
+    # 連續記憶體（保險）
+    full_color = np.ascontiguousarray(full_color)
+    original_color = np.ascontiguousarray(original_color)
 
     blended = cv2.addWeighted(full_color, alpha, original_color, 1 - alpha, 0)
     cv2.imwrite(save_path, blended)
+
 def ensure_single_channel_2d(arr):
     """
     支援 (H,W), (H,W,1), (H,W,3/4), (3/4,H,W) 等情況。
@@ -177,27 +197,6 @@ if __name__ == '__main__':
     os.makedirs(results_folder, exist_ok=True)
     print(f"Results will be saved in: {results_folder}")
 
-    # 複製所有 jpg 檔案到 results_folder，並命名為 original.jpg
-    for fname in os.listdir(folder_path):
-        if fname.lower().endswith('.jpg'):
-            src_path = os.path.join(folder_path, fname)
-            dst_path = os.path.join(results_folder, 'original.jpg')
-            shutil.copy2(src_path, dst_path)
-            print(f"Copied: {src_path} -> {dst_path}")
-            break  # 只複製第一個找到的 jpg 作為 original
-
-    
-    if os.path.isdir(folder_path):
-        files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.jpg', '.png'))]
-        if files:
-            sample_image_path = os.path.join(folder_path, files[0])
-            sample_image = cv2.imread(sample_image_path, cv2.IMREAD_UNCHANGED)
-            fullresolution_shape = sample_image.shape[:2]
-        else:
-            raise FileNotFoundError("No image found in folder to determine fullresolution_shape.")
-    else:
-        raise FileNotFoundError(f"{folder_path} is not a valid directory.")
-
     for line in lines:
         line = line.strip()
         if not line:
@@ -216,6 +215,47 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'Error parsing line: {line}\n{e}')
             continue
+
+            # ✅ 放這裡（在 load_depth_any 之前）
+        # 複製對應的原圖到 results_folder
+        for ext in ['.jpg', '.png']:
+            src_path = os.path.join(folder_path, f'{img_name}{ext}')
+            if os.path.exists(src_path):
+                dst_path = os.path.join(results_folder, f'{img_name}_original{ext}')
+                shutil.copy2(src_path, dst_path)
+                print(f"Copied: {src_path} -> {dst_path}")
+                break
+        else:
+            print(f"No original image found for {img_name}")
+
+
+        # ############ 新增：針對這個 img_name 取得它自己的原圖尺寸 ############
+        # 支援 .jpg/.png 兩種副檔名；若都不存在再 fallback 到資料夾第一張
+        original_cp_path_jpg = os.path.join(folder_path, f'{img_name}.jpg')
+        original_cp_path_png = os.path.join(folder_path, f'{img_name}.png')
+
+        original_cp_img = None
+        original_cp_path = None
+        if os.path.exists(original_cp_path_jpg):
+            original_cp_path = original_cp_path_jpg
+            original_cp_img = cv2.imread(original_cp_path_jpg, cv2.IMREAD_UNCHANGED)
+        elif os.path.exists(original_cp_path_png):
+            original_cp_path = original_cp_path_png
+            original_cp_img = cv2.imread(original_cp_path_png, cv2.IMREAD_UNCHANGED)
+        else:
+            # fallback：資料夾第一張
+            files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.jpg', '.png'))]
+            if files:
+                original_cp_path = os.path.join(folder_path, files[0])
+                original_cp_img = cv2.imread(original_cp_path, cv2.IMREAD_UNCHANGED)
+                print(f'Original CP image not found for {img_name}, fallback to {files[0]}')
+            else:
+                raise FileNotFoundError("No image found in folder to determine per-image fullresolution_shape.")
+
+        # 以「這張圖」的原始尺寸當作畫布大小
+        fullresolution_shape = original_cp_img.shape[:2]  # (H, W)
+
+        # ############ 以上為新內容；以下沿用你的流程 ############
 
         # 載入深度資料（npy/json/jpg 任一）
         depth_base = os.path.join(folder_path, 'depth_maps', f'{img_name}_depth')
@@ -255,11 +295,10 @@ if __name__ == '__main__':
         rot90_fullresolution = np.rot90(fullresolution)
 
         if depth_kind == 'npy':
-            # NPY 輸入 -> 結果存 NPY，非旋轉檔名為 original.npy
-            npy_path = os.path.join(results_folder, 'original.npy')
+            npy_path = os.path.join(results_folder, f'{img_name}_fullresolution.npy')
             np.save(npy_path, fullresolution)
             print(f"Saved: {npy_path}")
-            npy_rot_path = os.path.join(results_folder, f'{img_name}_rot90_fullresolution_img.npy')
+            npy_rot_path = os.path.join(results_folder, f'{img_name}_rot90_fullresolution.npy')
             np.save(npy_rot_path, rot90_fullresolution)
             print(f"Saved: {npy_rot_path}")
         else:
@@ -275,22 +314,19 @@ if __name__ == '__main__':
             # 彙總（只對 JSON/JPG 來源，以免 NPY 巨大陣列塞進單一 JSON）
             fullresolution_dict[img_name] = fullresolution.tolist()
 
-        # 疊合原圖（若存在）
-        original_cp_path = os.path.join(folder_path, f'{img_name}.jpg')
-        if os.path.exists(original_cp_path):
-            original_cp_img = cv2.imread(original_cp_path, cv2.IMREAD_UNCHANGED)
-            #original_cp_img = cv2.rotate(original_cp_img, cv2.ROTATE_90_CLOCKWISE)  # 與 fullresolution 方向一致
+        # 疊合原圖（沿用前面已找到的 original_cp_path / original_cp_img）
+        if original_cp_img is not None:
             overlap_path = os.path.join(results_folder, f'{img_name}_overlap.jpg')
             save_blended_image(fullresolution, original_cp_img, overlap_path, alpha=0.5)
             print(f"Saved: {overlap_path}")
 
-            # 旋轉後的疊圖
             original_cp_img_rot = cv2.rotate(original_cp_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
             rot_overlap_path = os.path.join(results_folder, f'{img_name}_rot90_overlap.jpg')
             save_blended_image(rot90_fullresolution, original_cp_img_rot, rot_overlap_path, alpha=0.5)
             print(f"Saved: {rot_overlap_path}")
         else:
-            print(f'Original CP image not found: {original_cp_path}')
+            print(f'Original CP image not found for {img_name} (checked .jpg/.png and fallback).')
+
 
         # 報告貼上的有效區域大小（以視覺化後的遮罩 >0 判斷）
         ys, xs = np.where(to_uint8_for_visual(fullresolution) > 0)
